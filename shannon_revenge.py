@@ -8,15 +8,25 @@ Claude signatures in commits and code.
 
 import argparse
 import base64
+import json
 import os
 import sys
-from typing import Optional
+from typing import List, Optional
 from dotenv import load_dotenv
 from github_client import GitHubAPIClient
 
 load_dotenv()
 from detector import ClaudeDetector, ClaudeDetection
 from output_formatter import OutputFormatter
+from betty import (
+    MCPScanner,
+    DependencyScanner,
+    BunScanner,
+    OrgScanner,
+    GitHubActionsScanner,
+    SDKScanner,
+)
+from betty.result import BettyFinding
 
 CODE_SEARCH_QUERIES = [
     '"noreply@anthropic.com" in:file',
@@ -29,9 +39,36 @@ CODE_SEARCH_QUERIES = [
 ]
 
 
+def run_betty_scan(owner: str, repo: str, client: GitHubAPIClient) -> List[BettyFinding]:
+    """
+    Run all betty scanners against a single repository.
+
+    Returns a flat list of BettyFinding objects.
+    """
+    findings: List[BettyFinding] = []
+    scanners = [
+        ("dependency", DependencyScanner(client)),
+        ("actions",    GitHubActionsScanner(client)),
+        ("bun",        BunScanner(client)),
+        ("mcp",        MCPScanner(client)),
+        ("sdk",        SDKScanner(client)),
+        ("org",        OrgScanner(client)),
+    ]
+    for label, scanner in scanners:
+        try:
+            results = scanner.scan(owner, repo)
+            for f in results:
+                print(f"[!] BETTY ({label}): {f.finding_type} — {f.evidence}")
+            findings.extend(results)
+        except Exception as e:
+            print(f"[!] Betty {label} scanner error: {e}")
+    return findings
+
+
 def scan_repository(owner: str, repo: str, token: Optional[str] = None,
                     max_commits: int = 1000, detector: Optional[ClaudeDetector] = None,
-                    since: Optional[str] = None, deep: bool = False):
+                    since: Optional[str] = None, deep: bool = False,
+                    betty: bool = False, betty_findings: Optional[List[BettyFinding]] = None):
     """
     Scan a single repository for Claude signatures.
 
@@ -43,6 +80,8 @@ def scan_repository(owner: str, repo: str, token: Optional[str] = None,
         detector: Optional existing detector to use
         since: Only scan commits after this ISO 8601 date (e.g. 2025-02-24T00:00:00Z)
         deep: Enable deep scanning (code search + file content fetch)
+        betty: Enable betty supply-chain scanners
+        betty_findings: Accumulator list for betty findings across multiple repos
     """
     print(f"\n[*] Scanning repository: {owner}/{repo}")
 
@@ -110,6 +149,17 @@ def scan_repository(owner: str, repo: str, token: Optional[str] = None,
                 print(f"[*] Code search: {search_count} detection(s) found")
             else:
                 print(f"[*] Code search: no additional detections found")
+
+        # Betty supply-chain scan (gated by --betty)
+        if betty:
+            print(f"[*] Running betty supply-chain scan...")
+            new_findings = run_betty_scan(owner, repo, client)
+            if betty_findings is not None:
+                betty_findings.extend(new_findings)
+            if new_findings:
+                print(f"[*] Betty: {len(new_findings)} finding(s)")
+            else:
+                print(f"[*] Betty: no supply-chain findings")
 
         print(f"\n[*] Scan complete: {commit_count} commits scanned, {detection_count} detections found")
 
@@ -203,7 +253,8 @@ def scan_repo_code_search(owner: str, repo: str, client: GitHubAPIClient,
 
 def scan_user_repositories(username: str, token: Optional[str] = None, max_repos: int = 10,
                             max_commits_per_repo: int = 100, detector: Optional[ClaudeDetector] = None,
-                            since: Optional[str] = None, deep: bool = False):
+                            since: Optional[str] = None, deep: bool = False,
+                            betty: bool = False, betty_findings: Optional[List[BettyFinding]] = None):
     """
     Scan all repositories for a user.
 
@@ -215,6 +266,8 @@ def scan_user_repositories(username: str, token: Optional[str] = None, max_repos
         detector: Optional existing detector to use
         since: Only scan commits after this ISO 8601 date
         deep: Enable deep scanning (code search + file content fetch)
+        betty: Enable betty supply-chain scanners
+        betty_findings: Accumulator list for betty findings
     """
     print(f"\n[*] Scanning repositories for user: {username}")
 
@@ -236,7 +289,8 @@ def scan_user_repositories(username: str, token: Optional[str] = None, max_repos
 
             print(f"\n[{i}/{len(repos)}] Scanning {owner}/{name}")
 
-            scan_repository(owner, name, token, max_commits_per_repo, detector, since=since, deep=deep)
+            scan_repository(owner, name, token, max_commits_per_repo, detector,
+                            since=since, deep=deep, betty=betty, betty_findings=betty_findings)
 
         return detector
 
@@ -247,7 +301,8 @@ def scan_user_repositories(username: str, token: Optional[str] = None, max_repos
 
 def scan_organization(org: str, token: Optional[str] = None, max_repos: int = 20,
                       max_commits_per_repo: int = 100, detector: Optional[ClaudeDetector] = None,
-                      since: Optional[str] = None, deep: bool = False):
+                      since: Optional[str] = None, deep: bool = False,
+                      betty: bool = False, betty_findings: Optional[List[BettyFinding]] = None):
     """
     Scan all repositories for an organization.
 
@@ -259,6 +314,8 @@ def scan_organization(org: str, token: Optional[str] = None, max_repos: int = 20
         detector: Optional existing detector to use
         since: Only scan commits after this ISO 8601 date (scans all repos when set)
         deep: Enable deep scanning (code search + file content fetch)
+        betty: Enable betty supply-chain scanners
+        betty_findings: Accumulator list for betty findings
     """
     print(f"\n[*] Scanning organization: {org}")
 
@@ -289,13 +346,59 @@ def scan_organization(org: str, token: Optional[str] = None, max_repos: int = 20
 
             print(f"\n[{i}/{len(repos)}] Scanning {owner}/{name}")
 
-            scan_repository(owner, name, token, max_commits_per_repo, detector, since=since, deep=deep)
+            scan_repository(owner, name, token, max_commits_per_repo, detector,
+                            since=since, deep=deep, betty=betty, betty_findings=betty_findings)
 
         return detector
 
     except Exception as e:
         print(f"[!] Error scanning organization: {e}")
         return None
+
+
+def print_betty_summary(betty_findings: List[BettyFinding]):
+    if not betty_findings:
+        return
+    print("\n" + "=" * 60)
+    print("BETTY SUPPLY-CHAIN SCAN SUMMARY")
+    print("=" * 60)
+    print(f"Total Betty Findings: {len(betty_findings)}")
+
+    by_scanner: dict = {}
+    by_type: dict = {}
+    by_repo: dict = {}
+    for f in betty_findings:
+        by_scanner[f.scanner] = by_scanner.get(f.scanner, 0) + 1
+        by_type[f.finding_type] = by_type.get(f.finding_type, 0) + 1
+        by_repo[f.repo] = by_repo.get(f.repo, 0) + 1
+
+    print("\nBy Scanner:")
+    for scanner, count in sorted(by_scanner.items()):
+        print(f"  - {scanner}: {count}")
+    print("\nBy Finding Type:")
+    for ftype, count in sorted(by_type.items()):
+        print(f"  - {ftype}: {count}")
+    print("\nBy Repository:")
+    for repo, count in sorted(by_repo.items()):
+        print(f"  - {repo}: {count}")
+    print("=" * 60 + "\n")
+
+
+def export_betty_json(betty_findings: List[BettyFinding], filepath: str):
+    data = [
+        {
+            "repository": f.repo,
+            "scanner": f.scanner,
+            "finding_type": f.finding_type,
+            "evidence": f.evidence,
+            "file_path": f.file_path,
+            "matched_value": f.matched_value,
+            "additional": f.additional,
+        }
+        for f in betty_findings
+    ]
+    with open(filepath, "w") as fh:
+        json.dump(data, fh, indent=2)
 
 
 def main():
@@ -321,6 +424,12 @@ Examples:
 
   # Deep scan with code search
   %(prog)s --repo owner/repo --deep --max-commits 10
+
+  # Betty supply-chain scan (deps, MCP, bun, actions, SDK, org forks)
+  %(prog)s --repo owner/repo --betty
+
+  # Full scan: commits + deep code search + betty
+  %(prog)s --repo owner/repo --deep --betty --json results.json
 
   # Use custom detection patterns
   %(prog)s --repo owner/repo --patterns patterns.json
@@ -368,10 +477,23 @@ Examples:
         help="Enable deep scanning: run code search queries and fetch file content. "
              "Uses search API (30 req/min). Increases scan time significantly."
     )
+    parser.add_argument(
+        "--betty",
+        action="store_true",
+        default=False,
+        help="Enable betty supply-chain scanning: checks dependencies, MCP, Bun, "
+             "GitHub Actions, SDK usage, and Anthropic org forks."
+    )
     parser.add_argument("--patterns", type=str, help="Path to custom detection patterns JSON file")
     parser.add_argument("--json", type=str, help="Output results to JSON file")
     parser.add_argument("--csv", type=str, help="Output results to CSV file")
     parser.add_argument("--report", type=str, help="Output results to text report file")
+    parser.add_argument(
+        "--betty-json",
+        type=str,
+        default=None,
+        help="Write betty supply-chain findings to a separate JSON file"
+    )
 
     args = parser.parse_args()
 
@@ -388,39 +510,59 @@ Examples:
     else:
         detector = ClaudeDetector()
 
+    betty_findings: List[BettyFinding] = []
+
     if args.repo:
         if "/" not in args.repo:
             print("[!] Error: Repository must be in format 'owner/repo'")
             sys.exit(1)
         owner, repo = args.repo.split("/", 1)
-        detector = scan_repository(owner, repo, args.token, args.max_commits, detector, since=args.since, deep=args.deep)
+        detector = scan_repository(owner, repo, args.token, args.max_commits, detector,
+                                   since=args.since, deep=args.deep,
+                                   betty=args.betty, betty_findings=betty_findings)
 
     elif args.user:
-        detector = scan_user_repositories(args.user, args.token, args.max_repos, args.max_commits, detector, since=args.since, deep=args.deep)
+        detector = scan_user_repositories(args.user, args.token, args.max_repos, args.max_commits,
+                                          detector, since=args.since, deep=args.deep,
+                                          betty=args.betty, betty_findings=betty_findings)
 
     elif args.org:
-        detector = scan_organization(args.org, args.token, args.max_repos, args.max_commits, detector, since=args.since, deep=args.deep)
+        detector = scan_organization(args.org, args.token, args.max_repos, args.max_commits,
+                                     detector, since=args.since, deep=args.deep,
+                                     betty=args.betty, betty_findings=betty_findings)
 
+    # Print claude detection results
     if not detector or not detector.get_detections():
         print("\n[*] No Claude detections found.")
+    else:
+        detections = detector.get_detections()
+        summary = detector.get_detection_summary()
+        OutputFormatter.print_summary(summary)
+
+        if args.json:
+            OutputFormatter.to_json(detections, args.json)
+            print(f"[*] JSON output written to: {args.json}")
+
+        if args.csv:
+            OutputFormatter.to_csv(detections, args.csv)
+            print(f"[*] CSV output written to: {args.csv}")
+
+        if args.report:
+            OutputFormatter.to_text_report(detections, summary, args.report)
+            print(f"[*] Report written to: {args.report}")
+
+    # Print and export betty results
+    if args.betty:
+        print_betty_summary(betty_findings)
+        if not betty_findings:
+            print("[*] No betty supply-chain findings.")
+
+        if args.betty_json:
+            export_betty_json(betty_findings, args.betty_json)
+            print(f"[*] Betty JSON written to: {args.betty_json}")
+
+    if not (detector and detector.get_detections()) and not betty_findings:
         sys.exit(0)
-
-    detections = detector.get_detections()
-    summary = detector.get_detection_summary()
-
-    OutputFormatter.print_summary(summary)
-
-    if args.json:
-        OutputFormatter.to_json(detections, args.json)
-        print(f"[*] JSON output written to: {args.json}")
-
-    if args.csv:
-        OutputFormatter.to_csv(detections, args.csv)
-        print(f"[*] CSV output written to: {args.csv}")
-
-    if args.report:
-        OutputFormatter.to_text_report(detections, summary, args.report)
-        print(f"[*] Report written to: {args.report}")
 
 
 if __name__ == "__main__":

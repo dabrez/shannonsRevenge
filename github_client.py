@@ -24,24 +24,34 @@ class GitHubAPIClient:
             self.session.headers.update({"Authorization": f"token {token}"})
         self.session.headers.update({"Accept": "application/vnd.github.v3+json"})
 
-        # Cached rate limit state — updated from response headers, no extra API calls needed
+        # Cached rate limit state — core API bucket (updated from response headers)
         self._rate_limit_remaining = 5000
         self._rate_limit_reset = 0
 
-    def _update_rate_limit_from_response(self, response: requests.Response):
+        # Separate search API bucket (30 req/min)
+        self._search_remaining = 30
+        self._search_reset = 0
+
+    def _update_rate_limit_from_response(self, response: requests.Response, search: bool = False):
         """Update cached rate limit state from GitHub response headers."""
         try:
             remaining = response.headers.get("X-RateLimit-Remaining")
             reset = response.headers.get("X-RateLimit-Reset")
             if remaining is not None:
-                self._rate_limit_remaining = int(remaining)
+                if search:
+                    self._search_remaining = int(remaining)
+                else:
+                    self._rate_limit_remaining = int(remaining)
             if reset is not None:
-                self._rate_limit_reset = int(reset)
+                if search:
+                    self._search_reset = int(reset)
+                else:
+                    self._rate_limit_reset = int(reset)
         except (ValueError, TypeError):
             pass
 
     def _wait_for_rate_limit(self):
-        """Block if cached rate limit is nearly exhausted."""
+        """Block if core rate limit is nearly exhausted."""
         if self._rate_limit_remaining < 10:
             wait_time = self._rate_limit_reset - time.time() + 5
             if wait_time > 0:
@@ -49,6 +59,15 @@ class GitHubAPIClient:
                 time.sleep(wait_time)
             # Reset optimistically after sleeping
             self._rate_limit_remaining = 5000
+
+    def _wait_for_search_rate_limit(self):
+        """Block if search rate limit (30/min) is nearly exhausted."""
+        if self._search_remaining < 2:
+            wait_time = self._search_reset - time.time() + 2
+            if wait_time > 0:
+                print(f"[*] Search rate limit nearly exhausted. Waiting {int(wait_time)}s...")
+                time.sleep(wait_time)
+            self._search_remaining = 30
 
     def _paginated_get(self, url: str, params: Optional[Dict] = None) -> Generator[Dict, None, None]:
         """
@@ -192,13 +211,13 @@ class GitHubAPIClient:
 
         page = 1
         while True:
-            self._wait_for_rate_limit()
+            self._wait_for_search_rate_limit()
             params["page"] = page
             params["per_page"] = 100
 
             response = self.session.get(url, params=params, timeout=DEFAULT_TIMEOUT)
+            self._update_rate_limit_from_response(response, search=True)
             response.raise_for_status()
-            self._update_rate_limit_from_response(response)
 
             data = response.json()
             items = data.get("items", [])
@@ -328,13 +347,13 @@ class GitHubAPIClient:
         page = 1
 
         while True:
-            self._wait_for_rate_limit()
+            self._wait_for_search_rate_limit()
             params["page"] = page
 
             try:
                 response = self.session.get(url, params=params, timeout=DEFAULT_TIMEOUT)
+                self._update_rate_limit_from_response(response, search=True)
                 response.raise_for_status()
-                self._update_rate_limit_from_response(response)
 
                 data = response.json()
                 items = data.get("items", [])
@@ -353,6 +372,7 @@ class GitHubAPIClient:
                     retry_after = int(response.headers.get("Retry-After", 60))
                     print(f"[!] Search API rate limit hit. Waiting {retry_after}s...")
                     time.sleep(retry_after)
+                    self._search_remaining = 30
                     continue  # retry same page
                 print(f"[!] Code search HTTP error: {e}")
                 break
