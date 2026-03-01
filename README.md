@@ -1,5 +1,23 @@
 # ShannonRevenge
 
+# Why does this exist?
+
+On February 27, 2026, the Department of War designated 
+Anthropic a supply chain risk.
+
+Defense contractors must now certify they have no 
+commercial activity with Anthropic.
+
+This tool helps you comply.
+
+Named after Claude Shannon, the father of information theory.
+Named after the man Claude is named after.
+Named after the mathematical foundation the Pentagon runs on.
+
+We wish to comply with instructions from the Department of War.
+
+# The project
+
 A GitHub scanner that identifies repositories with Claude in their supply chain by detecting Claude signatures in commits and code.
 
 ## Features
@@ -68,6 +86,28 @@ Scan all repositories for an organization:
 python shannon_revenge.py --org organization-name --max-repos 20
 ```
 
+## Known Limitations
+
+Shannon finds what Claude touched directly.
+
+It cannot find:
+- Code Claude suggested that a human typed manually
+- Architecture decisions Claude informed
+- Variables named after Claude's suggestions  
+- Code written by developers who read Claude's output
+- The context window Claude used to understand your codebase
+
+Can you certify zero Claude involvement?
+
+No.
+Neither can we.
+Neither can your lawyers.
+Neither can the Pentagon.
+
+This is not a bug.
+This is the point.
+
+
 ### Custom Detection Patterns
 
 Use a custom patterns configuration file:
@@ -92,6 +132,25 @@ You can customize the detection patterns by editing `patterns.json` or creating 
   ]
 }
 ```
+
+## Detection Methods
+
+**High confidence (direct signatures)**
+- Co-authored-by: Claude <noreply@anthropic.com>
+- Generated with [Claude Code] in commit messages
+- .claude/ directory in repository
+- CLAUDE.md in repository root or subdirectories
+- claude-code-bot as commit author
+
+**Medium confidence (pattern matching)**  
+- Commit messages referencing Claude or Anthropic
+- Code comments with Claude markers
+- Cursor IDE references in commits
+
+**Known false positives**
+- The word "cursor" in branch names (e.g. cursor-move-foldedline)
+- We are working on this
+- PRs welcome
 
 ### Output Formats
 
@@ -268,6 +327,44 @@ Detections by Type:
 - Rate limited by GitHub API quotas
 - Detection based on known Claude signatures (may not catch all cases)
 - Large repositories may take time to scan completely
+
+### Current Known False Positives
+
+The word "cursor" in branch names will trigger 
+the Cursor IDE detector.
+
+Example: `cursor-move-foldedline-unit` in a merge 
+commit from VSCode will flag as cursor_detected.
+
+This is on our brain. Fix incoming. PRs welcome.
+
+## Legal
+
+This is a compliance tool.
+
+The supply chain risk designation under 10 USC 3252 requires contractors to certify their DoW contract work does not involve designated entities.
+
+We are helping contractors make that certification accurately.
+
+Anthropic's own statement notes the designation legally 
+extends only to DoW contract work, not commercial activity.
+We make no claims beyond what the tool finds.
+Simply attempting to help everyone follow the laws as written, especially when they change no matter what following that law specifically means.
+
+As a reminder, following the supply chain designation is a requirement for all DoW work. No matter how connected that is to your infrastructure. 
+
+## Contributing
+
+Found a detection pattern we missed?
+Found a false positive?
+Work at a defense contractor and found something interesting?
+
+Open an issue.
+Open a PR.
+
+The more accurate this tool is, the more useful 
+it is for compliance purposes.
+
 
 ## License
 
