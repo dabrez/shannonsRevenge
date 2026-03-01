@@ -1,0 +1,259 @@
+================================================================================
+SHANNON REVENGE - CLAUDE SUPPLY CHAIN DETECTION REPORT
+================================================================================
+Generated: 2026-03-01T02:49:22.517222
+
+SUMMARY
+--------------------------------------------------------------------------------
+Total Detections: 13
+Repositories Affected: 5
+
+Detections by Type:
+  - claude_file_found: 2
+  - signature_claude_email: 9
+  - signature_co_author: 1
+  - copilot_detected: 1
+
+Detections by Repository:
+  - palantir/gradle-plugin-testing: 1
+  - palantir/blueprint: 2
+  - palantir/policy-bot: 1
+  - palantir/osdk-ts: 8
+  - palantir/pack: 1
+
+================================================================================
+DETAILED DETECTIONS
+================================================================================
+
+[1] palantir/gradle-plugin-testing
+    Commit: 
+    URL: 
+    Author:  <>
+    Date: 
+    Detection Type: claude_file_found
+    Evidence: Found Claude-specific file: CLAUDE.md
+    Files Modified (1):
+      - CLAUDE.md
+    Commit Message:
+      
+
+[2] palantir/blueprint
+    Commit: 3743508e
+    URL: https://github.com/palantir/blueprint/commit/3743508e0b0e1a8dc96c34debd5194e79b36ae35
+    Author: Oliver Black <9076962+ollie299792458@users.noreply.github.com>
+    Date: 2026-01-12T16:30:15Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (6):
+      - packages/core/src/components/hotkeys/hotkeyParser.ts
+      - packages/core/src/components/hotkeys/hotkeys-target.md
+      - packages/core/src/hooks/hotkeys/use-hotkeys.md
+      - packages/core/test/hotkeys/hotkeysParserTests.ts
+      - packages/docs-app/src/examples/core-examples/hotkeyModifierExample.tsx
+      ... and 1 more
+    Commit Message:
+      Fix Hotkeys for custom keyboard layouts (#7659)
+      
+      Co-authored-by: Claude <noreply@anthropic.com>
+
+[3] palantir/blueprint
+    Commit: b7216551
+    URL: https://github.com/palantir/blueprint/commit/b72165510ec583af24c242698f1e5046bb6dbe6e
+    Author: Brandon Liu <11067567+liubrandon@users.noreply.github.com>
+    Date: 2025-07-09T17:15:36Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (5):
+      - packages/core/src/components/divider/_divider.scss
+      - packages/core/src/components/divider/divider.md
+      - packages/core/src/components/divider/divider.tsx
+      - packages/docs-app/src/examples/core-examples/dividerPlaygroundExample.tsx
+      - packages/table/changelog/@unreleased/pr-7501.v2.yml
+    Commit Message:
+      Feature/divider compact prop (#7501)
+      
+      Co-authored-by: Brandon Liu <bliu@palantir.com>
+      ...
+
+[4] palantir/policy-bot
+    Commit: c0135522
+    URL: https://github.com/palantir/policy-bot/commit/c013552248d2a99911207fa5c0045428ac073fa2
+    Author: Ankit Shankar <ankitshankar@gmail.com>
+    Date: 2025-09-11T22:10:22Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (3):
+      - README.md
+      - policy/predicate/file.go
+      - policy/predicate/file_test.go
+    Commit Message:
+      Add file filtering support to the modified_lines predicate (#1043)
+      
+      Supports three filtering modes:
+      ...
+
+[5] palantir/osdk-ts
+    Commit: 
+    URL: 
+    Author:  <>
+    Date: 
+    Detection Type: claude_file_found
+    Evidence: Found Claude-specific file: CLAUDE.md
+    Files Modified (1):
+      - CLAUDE.md
+    Commit Message:
+      
+
+[6] palantir/osdk-ts
+    Commit: abb0e0fe
+    URL: https://github.com/palantir/osdk-ts/commit/abb0e0fe587f2fcf19b05982fbc4132c5ff6f762
+    Author: Nihal Bhatnagar <nihal.bhatnagar@gmail.com>
+    Date: 2026-02-23T14:49:33Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (20):
+      - .changeset/brave-meals-float.md
+      - .changeset/quiet-lions-run.md
+      - packages/client/src/actions/applyAction.ts
+      - packages/faux/src/FauxFoundry/FauxDataStore.test.ts
+      - packages/faux/src/FauxFoundry/validateAction.test.ts
+      ... and 15 more
+    Commit Message:
+      Update platform SDKs and add transactionId to Actions.apply (#2565)
+      
+      * Update platform SDKs and add transactionId to Actions.apply
+      ...
+
+[7] palantir/osdk-ts
+    Commit: 12dcb6a0
+    URL: https://github.com/palantir/osdk-ts/commit/12dcb6a01eb809542ccb0e323c627c7424c84e3d
+    Author: Sami Alfhaily <60448820+samialfhaily@users.noreply.github.com>
+    Date: 2026-02-21T13:42:05Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (35):
+      - .changeset/chatty-clowns-take.md
+      - .github/workflows/ci.yml
+      - examples/example-expo-sdk-2.x-no-osdk/package.json
+      - examples/example-expo-sdk-2.x/package.json
+      - examples/example-react-sdk-1.x/package.json
+      ... and 30 more
+    Commit Message:
+      Bump `@types/node` and `vite` versions (#2436)
+      
+      * Bump node version to 22.9.0
+      ...
+
+[8] palantir/osdk-ts
+    Commit: 0a0d7cb8
+    URL: https://github.com/palantir/osdk-ts/commit/0a0d7cb8d60d3652905fa4a1cf3aa4e2ca69e7f1
+    Author: Nihal Bhatnagar <nihal.bhatnagar@gmail.com>
+    Date: 2026-02-19T21:17:40Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (2):
+      - .changeset/filter-dollar-properties.md
+      - packages/functions/src/transactions/createWriteableClient.ts
+    Commit Message:
+      [Functions] Filter $ prefixed properties in writeable client edits (#2571)
+      
+      Skip OSDK metadata properties (like $apiName, $primaryKey, $objectType)
+      ...
+
+[9] palantir/osdk-ts
+    Commit: 1885d581
+    URL: https://github.com/palantir/osdk-ts/commit/1885d5813f60151adbc24b680563a187492fec84
+    Author: ziyunp <47520196+ziyunp@users.noreply.github.com>
+    Date: 2026-02-03T14:29:20Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (45):
+      - .changeset/great-paws-poke.md
+      - packages/e2e.sandbox.peopleapp/package.json
+      - packages/e2e.sandbox.peopleapp/src/app/employees/EmployeesTable.tsx
+      - packages/e2e.sandbox.peopleapp/src/app/offices/OfficeTable.module.css
+      - packages/e2e.sandbox.peopleapp/src/app/offices/page.tsx
+      ... and 40 more
+    Commit Message:
+      [Components] ObjectTable with useOsdkObjects, loading and empty state (#2409)
+      
+      * Add README
+      ...
+
+[10] palantir/osdk-ts
+    Commit: 30617fa1
+    URL: https://github.com/palantir/osdk-ts/commit/30617fa1f0652e9cda68edd47ec3421d23c603f7
+    Author: ziyunp <47520196+ziyunp@users.noreply.github.com>
+    Date: 2026-01-29T17:01:48Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (30):
+      - .changeset/petite-walls-study.md
+      - packages/e2e.sandbox.peopleapp/package.json
+      - packages/e2e.sandbox.peopleapp/src/app/employees/EmployeesTable.tsx
+      - packages/e2e.sandbox.peopleapp/src/index.css
+      - packages/react-components-styles/src/index.css
+      ... and 25 more
+    Commit Message:
+      [Components] ObjectTable sorting and pinning (#2361)
+      
+      * Add README
+      ...
+
+[11] palantir/osdk-ts
+    Commit: 81af4c88
+    URL: https://github.com/palantir/osdk-ts/commit/81af4c886eefdb1d080b5be5a40eee385b4145e9
+    Author: eran witkon <ewitkon@palantir.com>
+    Date: 2025-10-08T22:16:27Z
+    Detection Type: signature_co_author
+    Evidence: Found pattern 'co_author' in commit message
+    Files Modified (164):
+      - .changeset/yellow-geese-like.md
+      - .monorepolint.config.mjs
+      - eslint.config.mjs
+      - packages/monorepo.cspell/dict.osdk-code.txt
+      - packages/osdk-docs-context/OSDK-DOCS-CONTEXT-IN-MCP.md
+      ... and 159 more
+    Commit Message:
+      Generate compiled version of OSDK docs (#1994)
+      
+      * Add typescript-sdk-docs-examples package
+      ...
+
+[12] palantir/osdk-ts
+    Commit: 9f87b52f
+    URL: https://github.com/palantir/osdk-ts/commit/9f87b52fd4908a3e3e5961e89c41ad1913a56848
+    Author: Eric Anderson <eanderson@palantir.com>
+    Date: 2025-07-08T13:29:49Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (2):
+      - .changeset/silver-ends-melt.md
+      - .github/copilot-instructions.md
+    Commit Message:
+      Add GitHub Copilot instructions with changeset quoting guidelines (#1688)
+      
+      * Add GitHub Copilot instructions with changeset quoting guidelines
+      ...
+
+[13] palantir/pack
+    Commit: 5fa10ca2
+    URL: https://github.com/palantir/pack/commit/5fa10ca206d5bfd9b7c99681a95d83fde06671a2
+    Author: Chris Cook <3954850+cookc@users.noreply.github.com>
+    Date: 2026-02-24T21:19:17Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (4):
+      - .changeset/some-kiwis-bet.md
+      - packages/state/foundry/src/FoundryDocumentService.ts
+      - packages/state/foundry/src/__tests__/FoundrySecurityConversion.test.ts
+      - packages/state/foundry/src/__tests__/FoundryStatusTracking.test.ts
+    Commit Message:
+      Convert wire security types in searchDocuments and onMetadataSubscriptionOpened (#145)
+      
+      Co-authored-by: Chris Cook <ccook@palantir.com>
+      ...
+
+================================================================================
+END OF REPORT
+================================================================================
