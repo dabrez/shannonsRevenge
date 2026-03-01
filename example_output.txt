@@ -1,0 +1,216 @@
+================================================================================
+SHANNON REVENGE - CLAUDE SUPPLY CHAIN DETECTION REPORT
+================================================================================
+Generated: 2026-03-01T00:46:25.327518
+
+SUMMARY
+--------------------------------------------------------------------------------
+Total Detections: 14
+Repositories Affected: 1
+
+Detections by Type:
+  - copilot_detected: 14
+
+Detections by Repository:
+  - microsoft/Mastering-GitHub-Copilot-for-Paired-Programming: 14
+
+================================================================================
+DETAILED DETECTIONS
+================================================================================
+
+[1] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: a07754d0
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/a07754d042f5a72604d4cf92492d4e7d2c8caf6f
+    Author: scubaninja <scubaninja@github.com>
+    Date: 2026-02-22T12:09:55Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (1):
+      - README.md
+    Commit Message:
+      Add lessons for GitHub Copilot CLI and Coding Agent to README.md
+
+[2] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: 3463bc6e
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/3463bc6ee3815683f3ceea8116e6c308ce13aba5
+    Author: scubaninja <scubaninja@github.com>
+    Date: 2026-02-22T11:59:24Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (2):
+      - Using-GitHub-Copilot-CLI/README.md
+      - Using-GitHub-Copilot-Coding-Agent/README.md
+    Commit Message:
+      Fix typos and improve clarity in README.md files for GitHub Copilot CLI and Coding Agent modules
+
+[3] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: 8ae769b4
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/8ae769b49e1986f86cea866f0283a7237295fdff
+    Author: scubaninja <scubaninja@github.com>
+    Date: 2026-02-22T09:29:15Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (1):
+      - Using-GitHub-Copilot-CLI/README.md
+    Commit Message:
+      Revise README.md to clarify repository for exercises and streamline learning goals for GitHub Copilot CLI workshop
+
+[4] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: 5e869773
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/5e869773baf81a3383f590634dbdb9c7d5c1a526
+    Author: Anthony Bartolo <abartolo@microsoft.com>
+    Date: 2026-02-20T20:49:05Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (22):
+      - Using-GitHub-Copilot-CLI/images/001-install.jpg
+      - Using-GitHub-Copilot-CLI/images/002-welcome.jpg
+      - Using-GitHub-Copilot-CLI/images/003-default-mode.jpg
+      - Using-GitHub-Copilot-CLI/images/004-plan-mode.jpg
+      - Using-GitHub-Copilot-CLI/images/005-auto-model.jpg
+      ... and 17 more
+    Commit Message:
+      Merge pull request #220 from microsoft/copilot/sub-pr-219
+      
+      Add missing images directory for GitHub Copilot CLI workshop
+
+[5] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: 535bf26f
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/535bf26fd5bf701350363f9c390aef540fa4a334
+    Author: April Yoho <scubaninja@github.com>
+    Date: 2026-02-20T14:16:57Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (1):
+      - Using-GitHub-Copilot-CLI/README.md
+    Commit Message:
+      Merge pull request #223 from microsoft/cli-scubaninja
+      
+      Update README.md to focus on Python integration with GitHub Copilot CLI, enhancing clarity and specificity in course content.
+
+[6] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: be3bfedb
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/be3bfedb46959a1e53fc5500cbdd3d11861cfdd6
+    Author: scubaninja <scubaninja@github.com>
+    Date: 2026-02-20T14:16:27Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (1):
+      - Using-GitHub-Copilot-CLI/README.md
+    Commit Message:
+      Update README.md to focus on Python integration with GitHub Copilot CLI, enhancing clarity and specificity in course content.
+
+[7] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: ff01dc89
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/ff01dc894b8ce71de9e12125ecd2d9865d321b3b
+    Author: April Yoho <scubaninja@github.com>
+    Date: 2026-02-19T10:45:45Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (1):
+      - Using-GitHub-Copilot-Coding-Agent/README.md
+    Commit Message:
+      Merge pull request #222 from microsoft/cca-scubaninja
+      
+      Add comprehensive module on using GitHub Copilot Coding Agent
+
+[8] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: 45be961f
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/45be961fcc9517c76d4fcdd3da50267a1621d5a5
+    Author: scubaninja <scubaninja@github.com>
+    Date: 2026-02-19T09:11:44Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (1):
+      - Using-GitHub-Copilot-Coding-Agent/README.md
+    Commit Message:
+      Add comprehensive module on using GitHub Copilot Coding Agent
+
+[9] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: b5a2f0aa
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/b5a2f0aa5a98ea1e41b9db0fc617758cfa34cafd
+    Author: April Yoho <scubaninja@github.com>
+    Date: 2026-02-19T08:54:34Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (1):
+      - Using-GitHub-Copilot-CLI/README.md
+    Commit Message:
+      Merge pull request #219 from microsoft/cli-workshop-scubaninja
+      
+      Add comprehensive README.md for GitHub Copilot CLI workshop
+
+[10] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: 309d7183
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/309d718391ad7714d6a81e431be32f646f2325cc
+    Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+    Date: 2026-02-19T08:52:14Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (22):
+      - Using-GitHub-Copilot-CLI/images/001-install.jpg
+      - Using-GitHub-Copilot-CLI/images/002-welcome.jpg
+      - Using-GitHub-Copilot-CLI/images/003-default-mode.jpg
+      - Using-GitHub-Copilot-CLI/images/004-plan-mode.jpg
+      - Using-GitHub-Copilot-CLI/images/005-auto-model.jpg
+      ... and 17 more
+    Commit Message:
+      Add images directory with placeholder files for GitHub Copilot CLI screenshots
+      
+      Co-authored-by: scubaninja <26086919+scubaninja@users.noreply.github.com>
+
+[11] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: d658868f
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/d658868fcd52036bda5b0bcdfea9dfaf02e90f84
+    Author: scubaninja <scubaninja@github.com>
+    Date: 2026-02-18T16:48:16Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (1):
+      - Using-GitHub-Copilot-CLI/README.md
+    Commit Message:
+      Refine README.md for GitHub Copilot CLI: update terminology, enhance clarity, and improve model selection details
+
+[12] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: b78ae83c
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/b78ae83ce835ea95adaf71022c5eab372314d1e9
+    Author: scubaninja <scubaninja@github.com>
+    Date: 2026-02-18T10:58:45Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (1):
+      - Using-GitHub-Copilot-CLI/README.md
+    Commit Message:
+      Add comprehensive README.md for GitHub Copilot CLI workshop
+
+[13] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: ad03a018
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/ad03a018af91bd8edbe42f7caa3bce7457391307
+    Author: Anthony Bartolo <abartolo@microsoft.com>
+    Date: 2025-09-10T21:36:56Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (2):
+      - GitHub-Copilot-for-Data-Scientists/README.md
+      - README.md
+    Commit Message:
+      Merge pull request #208 from microsoft/data-science
+      
+      add GitHub Copilot for Data Science
+
+[14] microsoft/Mastering-GitHub-Copilot-for-Paired-Programming
+    Commit: c5df7cb2
+    URL: https://github.com/microsoft/Mastering-GitHub-Copilot-for-Paired-Programming/commit/c5df7cb2497521ccdc7424ba2d0d8449cc088529
+    Author: Alfredo Deza <alfredodeza@microsoft.com>
+    Date: 2025-09-10T19:41:21Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (2):
+      - GitHub-Copilot-for-Data-Scientists/README.md
+      - README.md
+    Commit Message:
+      add GitHub Copilot for Data Science
+
+================================================================================
+END OF REPORT
+================================================================================

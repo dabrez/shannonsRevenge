@@ -1,0 +1,152 @@
+================================================================================
+SHANNON REVENGE - CLAUDE SUPPLY CHAIN DETECTION REPORT
+================================================================================
+Generated: 2026-03-01T00:52:28.914451
+
+SUMMARY
+--------------------------------------------------------------------------------
+Total Detections: 7
+Repositories Affected: 4
+
+Detections by Type:
+  - signature_claude_email: 4
+  - cursor_detected: 2
+  - copilot_detected: 1
+
+Detections by Repository:
+  - microsoft/vscode: 2
+  - microsoft/litebox: 1
+  - microsoft/markitdown: 1
+  - microsoft/autogen: 3
+
+================================================================================
+DETAILED DETECTIONS
+================================================================================
+
+[1] microsoft/vscode
+    Commit: f1122450
+    URL: https://github.com/microsoft/vscode/commit/f1122450738ea69484b55f4d7a58ba72731cd307
+    Author: Alexandru Dima <alex.dima@outlook.com>
+    Date: 2026-02-28T23:06:13Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (2):
+      - src/vs/editor/common/cursor/cursorMoveCommands.ts
+      - src/vs/editor/test/browser/controller/cursorMoveCommand.test.ts
+    Commit Message:
+      editor: add 'foldedLine' unit to cursorMove command (#296106)
+      
+      * editor: add 'foldedLine' unit to cursorMove command
+      ...
+
+[2] microsoft/vscode
+    Commit: baa352b9
+    URL: https://github.com/microsoft/vscode/commit/baa352b9eaaa97360ca23c8242af0ed875d1ddf9
+    Author: Alexandru Dima <alexdima@microsoft.com>
+    Date: 2026-02-28T22:18:33Z
+    Detection Type: cursor_detected
+    Evidence: Cursor IDE reference found in commit message
+    Files Modified (300):
+      - .gitattributes
+      - .github/CODENOTIFY
+      - .github/agents/data.md
+      - .github/copilot-instructions.md
+      - .github/hooks/hooks.json
+      ... and 295 more
+    Commit Message:
+      Merge branch 'main' into cursor-move-foldedline-unit
+
+[3] microsoft/litebox
+    Commit: 8ad7debf
+    URL: https://github.com/microsoft/litebox/commit/8ad7debf1db2774f9ca295d9f6fd7924a1a8a381
+    Author: Weidong Cui <wdcui@microsoft.com>
+    Date: 2026-02-12T02:10:29Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (7):
+      - .gitignore
+      - litebox/src/mm/linux.rs
+      - litebox/src/platform/page_mgmt.rs
+      - litebox_common_linux/src/errno/mod.rs
+      - litebox_common_linux/src/mm.rs
+      ... and 2 more
+    Commit Message:
+      mm: Add support for MAP_FIXED_NOREPLACE flag in mmap (#639)
+      
+      ## Summary
+      ...
+
+[4] microsoft/markitdown
+    Commit: 38261fd3
+    URL: https://github.com/microsoft/markitdown/commit/38261fd31ca9cac3b6972b7b200abfc04bc14c93
+    Author: 一I <46012513+Wuhall@users.noreply.github.com>
+    Date: 2025-05-21T17:47:29Z
+    Detection Type: cursor_detected
+    Evidence: Cursor IDE reference found in commit message
+    Files Modified (2):
+      - .gitignore
+      - README.md
+    Commit Message:
+      Update Python version requirement and add .cursorrules to .gitignore (#1249)
+      
+      * update markdown
+      ...
+
+[5] microsoft/autogen
+    Commit: c0279128
+    URL: https://github.com/microsoft/autogen/commit/c02791282b405d83632274274f31236b496ea3c6
+    Author: Tyler Payne <tylerpayne@users.noreply.github.com>
+    Date: 2025-10-02T16:35:12Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (17):
+      - python/packages/autogen-ext/examples/mcp_example_server.py
+      - python/packages/autogen-ext/examples/mcp_session_host_example.py
+      - python/packages/autogen-ext/src/autogen_ext/tools/mcp/__init__.py
+      - python/packages/autogen-ext/src/autogen_ext/tools/mcp/_actor.py
+      - python/packages/autogen-ext/src/autogen_ext/tools/mcp/_base.py
+      ... and 12 more
+    Commit Message:
+      Support MCP Elicitation, Sampling, and Roots via new McpSessionHost (#6833)
+      
+      Co-authored-by: Tyler Payne <tylerpayne@microsoft.com>
+      ...
+
+[6] microsoft/autogen
+    Commit: 17d3aef9
+    URL: https://github.com/microsoft/autogen/commit/17d3aef9f558727057bc1819a468fea8699c2b7c
+    Author: Eric Zhu <ekzhu@users.noreply.github.com>
+    Date: 2025-09-18T00:40:31Z
+    Detection Type: signature_claude_email
+    Evidence: Found pattern 'claude_email' in commit message
+    Files Modified (7):
+      - python/packages/autogen-agentchat/src/autogen_agentchat/agents/_code_executor_agent.py
+      - python/packages/autogen-ext/src/autogen_ext/code_executors/__init__.py
+      - python/packages/autogen-ext/src/autogen_ext/code_executors/docker/_docker_code_executor.py
+      - python/packages/autogen-ext/src/autogen_ext/code_executors/docker_jupyter/_docker_jupyter.py
+      - python/packages/autogen-ext/src/autogen_ext/code_executors/local/__init__.py
+      ... and 2 more
+    Commit Message:
+      Add security warnings and default to DockerCommandLineCodeExecutor (#7035)
+      
+      Co-authored-by: Claude <noreply@anthropic.com>
+
+[7] microsoft/autogen
+    Commit: 29846cb2
+    URL: https://github.com/microsoft/autogen/commit/29846cb26b588d4a977991f9f967805751ea65a3
+    Author: Copilot <198982749+Copilot@users.noreply.github.com>
+    Date: 2025-09-16T09:24:44Z
+    Detection Type: copilot_detected
+    Evidence: GitHub Copilot reference found in commit message
+    Files Modified (2):
+      - .github/copilot-instructions.md
+      - dotnet/dotnet-install.sh
+    Commit Message:
+      Add comprehensive GitHub Copilot instructions for AutoGen development (#7029)
+      
+      Co-authored-by: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+      ...
+
+================================================================================
+END OF REPORT
+================================================================================
