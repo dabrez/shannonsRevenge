@@ -68,13 +68,21 @@ class ClaudeDetector:
         r"(?i)# source: claude\.ai",
         r"(?i)// anthropic claude",
         r"(?i)# anthropic claude",
+        r"(?i)TODO\(claude\)",
+        r"(?i)TODO\(human\)",
+        r"(?i)#\s*NOTE\s*\(claude\)",
+        r"(?i)#\s*NOTE:\s*claude",
     ]
 
     CURSOR_SPECIFIC_PATTERNS = [
-        r"(?i)cursor",
-        r"\.cursor/",
-        r"cursor-tutor",
-        r"@cursor",
+        r"(?i)\bcursor\s+(ide|ai|editor)\b",
+        r"(?i)\bbuilt\s+with\s+cursor\b",
+        r"(?i)\busing\s+cursor\b",
+        r"(?i)\bgenerated\s+(by|with)\s+cursor\b",
+        r"\.cursor/rules",
+        r"\.cursor/settings",
+        r"(?i)cursor-tutor",
+        r"(?i)@cursor-?ai\b",
     ]
 
     COPILOT_PATTERNS = [
@@ -82,6 +90,20 @@ class ClaudeDetector:
         r"(?i)copilot generated",
         r"(?i)// copilot",
         r"(?i)# copilot",
+    ]
+
+    CLAUDE_FILE_SIGNALS = [
+        "CLAUDE.md",
+        ".claude/settings.json",
+        ".claude/settings.local.json",
+        ".claude/commands",
+        ".claude/memory",
+    ]
+
+    CLAUDE_AUTHOR_PATTERNS = [
+        r"(?i)claude\s+(sonnet|opus|haiku)",
+        r"(?i)claude-code",
+        r"(?i)^claude$",
     ]
 
     def __init__(self, custom_patterns: Optional[Dict] = None):
@@ -166,6 +188,88 @@ class ClaudeDetector:
         """
         repo_key = f"{repo_owner}/{repo_name}"
         return self.copilot_cache.get(repo_key)
+
+    def analyze_file_tree(self, tree: list, repo_owner: str, repo_name: str) -> list:
+        """
+        Check repo file tree for Claude-specific files.
+
+        Args:
+            tree: List of tree item dicts from get_repo_tree()
+            repo_owner: Repository owner
+            repo_name: Repository name
+
+        Returns:
+            List of new ClaudeDetection objects found
+        """
+        all_paths = {item.get("path", "") for item in tree}
+        new_detections = []
+
+        for signal in self.CLAUDE_FILE_SIGNALS:
+            matched_path = None
+            if signal in all_paths:
+                matched_path = signal
+            elif signal == "CLAUDE.md":
+                # Also match CLAUDE.md in subdirectories
+                for path in all_paths:
+                    if path.endswith("/CLAUDE.md"):
+                        matched_path = path
+                        break
+
+            if matched_path:
+                detection = ClaudeDetection(
+                    repo_owner=repo_owner,
+                    repo_name=repo_name,
+                    commit_sha="",
+                    commit_url="",
+                    author="",
+                    author_email="",
+                    commit_date="",
+                    commit_message="",
+                    detection_type="claude_file_found",
+                    evidence=f"Found Claude-specific file: {matched_path}",
+                    files_modified=[matched_path],
+                )
+                self.detections.append(detection)
+                new_detections.append(detection)
+
+        return new_detections
+
+    def analyze_author_name(self, commit: Dict, repo_owner: str, repo_name: str) -> Optional[ClaudeDetection]:
+        """
+        Check if a commit's author name matches a Claude agent pattern.
+
+        Args:
+            commit: Commit object from GitHub API
+            repo_owner: Repository owner
+            repo_name: Repository name
+
+        Returns:
+            ClaudeDetection if author name matches, None otherwise
+        """
+        commit_sha = commit.get("sha", "")
+        commit_data = commit.get("commit", {})
+        author_info = commit_data.get("author", {})
+        author_name = author_info.get("name", "")
+
+        for pattern in self.CLAUDE_AUTHOR_PATTERNS:
+            if re.search(pattern, author_name):
+                detection = ClaudeDetection(
+                    repo_owner=repo_owner,
+                    repo_name=repo_name,
+                    commit_sha=commit_sha,
+                    commit_url=commit.get("html_url", ""),
+                    author=author_name,
+                    author_email=author_info.get("email", ""),
+                    commit_date=author_info.get("date", ""),
+                    commit_message=commit_data.get("message", ""),
+                    detection_type="claude_author_name",
+                    evidence=f"Commit author name matches Claude pattern: {author_name!r}",
+                    files_modified=[],
+                )
+                self.detections.append(detection)
+                return detection
+
+        return None
 
     def analyze_commit(self, commit: Dict, repo_owner: str, repo_name: str) -> Optional[ClaudeDetection]:
         """

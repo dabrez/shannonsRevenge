@@ -1,0 +1,38 @@
+================================================================================
+SHANNON REVENGE - CLAUDE SUPPLY CHAIN DETECTION REPORT
+================================================================================
+Generated: 2026-03-01T01:33:41.292838
+
+SUMMARY
+--------------------------------------------------------------------------------
+Total Detections: 1
+Repositories Affected: 1
+
+Detections by Type:
+  - signature_co_author: 1
+
+Detections by Repository:
+  - amzn/selling-partner-api-samples: 1
+
+================================================================================
+DETAILED DETECTIONS
+================================================================================
+
+[1] amzn/selling-partner-api-samples
+    Commit: 70458bfb
+    URL: https://github.com/amzn/selling-partner-api-samples/commit/70458bfb2390bf816159d450ee66ea5d4932dfcf
+    Author: Chenyue Gao <chenyueg@amazon.com>
+    Date: 2025-08-18T09:33:19Z
+    Detection Type: signature_co_author
+    Evidence: Found pattern 'co_author' in commit message
+    Files Modified (1):
+      - use-cases/sp-api-mcp-server/README.md
+    Commit Message:
+      Update SP-API MCP Server README - simplify configuration
+      
+      - Require CATALOG_PATH to always point to selling-partner-api-models/models
+      ...
+
+================================================================================
+END OF REPORT
+================================================================================

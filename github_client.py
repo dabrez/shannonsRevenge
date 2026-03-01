@@ -3,6 +3,8 @@ import requests
 from typing import Optional, Dict, List, Generator
 from datetime import datetime
 
+DEFAULT_TIMEOUT = 30
+
 
 class GitHubAPIClient:
     """GitHub API client with rate limiting and pagination support."""
@@ -22,23 +24,31 @@ class GitHubAPIClient:
             self.session.headers.update({"Authorization": f"token {token}"})
         self.session.headers.update({"Accept": "application/vnd.github.v3+json"})
 
-    def _get_rate_limit_info(self) -> Dict:
-        """Get current rate limit status."""
-        response = self.session.get(f"{self.BASE_URL}/rate_limit")
-        response.raise_for_status()
-        return response.json()
+        # Cached rate limit state — updated from response headers, no extra API calls needed
+        self._rate_limit_remaining = 5000
+        self._rate_limit_reset = 0
+
+    def _update_rate_limit_from_response(self, response: requests.Response):
+        """Update cached rate limit state from GitHub response headers."""
+        try:
+            remaining = response.headers.get("X-RateLimit-Remaining")
+            reset = response.headers.get("X-RateLimit-Reset")
+            if remaining is not None:
+                self._rate_limit_remaining = int(remaining)
+            if reset is not None:
+                self._rate_limit_reset = int(reset)
+        except (ValueError, TypeError):
+            pass
 
     def _wait_for_rate_limit(self):
-        """Wait if rate limit is exceeded."""
-        rate_limit = self._get_rate_limit_info()
-        core_remaining = rate_limit["resources"]["core"]["remaining"]
-
-        if core_remaining < 10:
-            reset_time = rate_limit["resources"]["core"]["reset"]
-            wait_time = reset_time - time.time() + 5
+        """Block if cached rate limit is nearly exhausted."""
+        if self._rate_limit_remaining < 10:
+            wait_time = self._rate_limit_reset - time.time() + 5
             if wait_time > 0:
                 print(f"Rate limit nearly exceeded. Waiting {int(wait_time)} seconds...")
                 time.sleep(wait_time)
+            # Reset optimistically after sleeping
+            self._rate_limit_remaining = 5000
 
     def _paginated_get(self, url: str, params: Optional[Dict] = None) -> Generator[Dict, None, None]:
         """
@@ -61,8 +71,9 @@ class GitHubAPIClient:
             self._wait_for_rate_limit()
             params["page"] = page
 
-            response = self.session.get(url, params=params)
+            response = self.session.get(url, params=params, timeout=DEFAULT_TIMEOUT)
             response.raise_for_status()
+            self._update_rate_limit_from_response(response)
 
             data = response.json()
 
@@ -109,9 +120,44 @@ class GitHubAPIClient:
         """
         self._wait_for_rate_limit()
         url = f"{self.BASE_URL}/repos/{owner}/{repo}/commits/{sha}"
-        response = self.session.get(url)
+        response = self.session.get(url, timeout=DEFAULT_TIMEOUT)
         response.raise_for_status()
+        self._update_rate_limit_from_response(response)
         return response.json()
+
+    def get_file_content(self, owner: str, repo: str, path: str) -> Optional[Dict]:
+        self._wait_for_rate_limit()
+        url = f"{self.BASE_URL}/repos/{owner}/{repo}/contents/{path}"
+        try:
+            response = self.session.get(url, timeout=DEFAULT_TIMEOUT)
+            self._update_rate_limit_from_response(response)
+            if response.status_code == 404:
+                return None
+            response.raise_for_status()
+            data = response.json()
+            if isinstance(data, list):  # path is a directory
+                return None
+            return data
+        except requests.exceptions.HTTPError:
+            return None
+
+    def get_repo_tree(self, owner: str, repo: str, recursive: bool = True) -> List[Dict]:
+        self._wait_for_rate_limit()
+        params = {"recursive": "1"} if recursive else {}
+        url = f"{self.BASE_URL}/repos/{owner}/{repo}/git/trees/HEAD"
+        try:
+            response = self.session.get(url, params=params, timeout=DEFAULT_TIMEOUT)
+            self._update_rate_limit_from_response(response)
+            if response.status_code == 404:
+                return []
+            response.raise_for_status()
+            data = response.json()
+            if data.get("truncated"):
+                print(f"[!] Warning: tree for {owner}/{repo} was truncated (very large repo)")
+            return data.get("tree", [])
+        except Exception as e:
+            print(f"[!] Could not fetch repo tree for {owner}/{repo}: {e}")
+            return []
 
     def get_repo_info(self, owner: str, repo: str) -> Dict:
         """
@@ -126,8 +172,9 @@ class GitHubAPIClient:
         """
         self._wait_for_rate_limit()
         url = f"{self.BASE_URL}/repos/{owner}/{repo}"
-        response = self.session.get(url)
+        response = self.session.get(url, timeout=DEFAULT_TIMEOUT)
         response.raise_for_status()
+        self._update_rate_limit_from_response(response)
         return response.json()
 
     def search_repositories(self, query: str) -> Generator[Dict, None, None]:
@@ -149,8 +196,9 @@ class GitHubAPIClient:
             params["page"] = page
             params["per_page"] = 100
 
-            response = self.session.get(url, params=params)
+            response = self.session.get(url, params=params, timeout=DEFAULT_TIMEOUT)
             response.raise_for_status()
+            self._update_rate_limit_from_response(response)
 
             data = response.json()
             items = data.get("items", [])
@@ -175,7 +223,7 @@ class GitHubAPIClient:
             Repository objects
         """
         url = f"{self.BASE_URL}/orgs/{org}/repos"
-        params = {"type": "all", "sort": "updated"}
+        params = {"type": "public", "sort": "pushed", "direction": "desc"}
         yield from self._paginated_get(url, params)
 
     def get_org_info(self, org: str) -> Dict:
@@ -190,8 +238,9 @@ class GitHubAPIClient:
         """
         self._wait_for_rate_limit()
         url = f"{self.BASE_URL}/orgs/{org}"
-        response = self.session.get(url)
+        response = self.session.get(url, timeout=DEFAULT_TIMEOUT)
         response.raise_for_status()
+        self._update_rate_limit_from_response(response)
         return response.json()
 
     def get_org_members(self, org: str) -> Generator[Dict, None, None]:
@@ -229,8 +278,9 @@ class GitHubAPIClient:
 
         try:
             url = f"{self.BASE_URL}/repos/{owner}/{repo}"
-            response = self.session.get(url)
+            response = self.session.get(url, timeout=DEFAULT_TIMEOUT)
             response.raise_for_status()
+            self._update_rate_limit_from_response(response)
             repo_data = response.json()
 
             if repo_data.get("organization"):
@@ -238,7 +288,8 @@ class GitHubAPIClient:
 
                 try:
                     org_url = f"{self.BASE_URL}/orgs/{org_login}/copilot/billing/seats"
-                    org_response = self.session.get(org_url)
+                    org_response = self.session.get(org_url, timeout=DEFAULT_TIMEOUT)
+                    self._update_rate_limit_from_response(org_response)
 
                     if org_response.status_code == 200:
                         result["copilot_enabled"] = True
@@ -281,8 +332,9 @@ class GitHubAPIClient:
             params["page"] = page
 
             try:
-                response = self.session.get(url, params=params)
+                response = self.session.get(url, params=params, timeout=DEFAULT_TIMEOUT)
                 response.raise_for_status()
+                self._update_rate_limit_from_response(response)
 
                 data = response.json()
                 items = data.get("items", [])
@@ -296,6 +348,14 @@ class GitHubAPIClient:
                 if page > 10:
                     break
 
+            except requests.exceptions.HTTPError as e:
+                if response.status_code in (403, 429):
+                    retry_after = int(response.headers.get("Retry-After", 60))
+                    print(f"[!] Search API rate limit hit. Waiting {retry_after}s...")
+                    time.sleep(retry_after)
+                    continue  # retry same page
+                print(f"[!] Code search HTTP error: {e}")
+                break
             except Exception as e:
                 print(f"[!] Code search error: {e}")
                 break

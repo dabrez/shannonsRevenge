@@ -1,0 +1,43 @@
+================================================================================
+SHANNON REVENGE - CLAUDE SUPPLY CHAIN DETECTION REPORT
+================================================================================
+Generated: 2026-03-01T01:27:41.464222
+
+SUMMARY
+--------------------------------------------------------------------------------
+Total Detections: 1
+Repositories Affected: 1
+
+Detections by Type:
+  - cursor_detected: 1
+
+Detections by Repository:
+  - IBM/mcp-context-forge: 1
+
+================================================================================
+DETAILED DETECTIONS
+================================================================================
+
+[1] IBM/mcp-context-forge
+    Commit: 536f1595
+    URL: https://github.com/IBM/mcp-context-forge/commit/536f1595dd00d1ea060e8064b79ff6818a4b9efc
+    Author: rakdutta <66672470+rakdutta@users.noreply.github.com>
+    Date: 2026-02-28T10:27:56Z
+    Detection Type: cursor_detected
+    Evidence: Cursor IDE reference found in commit message
+    Files Modified (6):
+      - mcpgateway/static/admin.js
+      - mcpgateway/templates/admin.html
+      - tests/js/admin-edit-server-selection.test.js
+      - tests/js/admin-forms.test.js
+      - tests/js/admin-ui.test.js
+      ... and 1 more
+    Commit Message:
+      [FIX][UI]: Disable public visibility radio button when ALLOW_PUBLIC_VISIBILITY=false in edit forms (#3323)
+      
+      * public radio button disable
+      ...
+
+================================================================================
+END OF REPORT
+================================================================================
