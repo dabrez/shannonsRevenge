@@ -20,6 +20,13 @@ We wish to comply with instructions from the Department of War.
 
 A GitHub scanner that identifies repositories with Claude in their supply chain by detecting Claude signatures in commits and code.
 
+## Known Limitations
+
+- Detection relies on opt-in signals (co-author trailers, Claude Code markers, comment patterns). Developers who don't use these or actively remove them won't be detected.
+- Only scans commit metadata and messages by default; `--deep` mode fetches file content but is rate-limited and slow.
+- GitHub API limits: 60 req/hour unauthenticated, 5,000/hour with a token. A full 14-org scan needs ~2 hours or a paid plan.
+- False positives are possible for generic terms (e.g. CSS `cursor` properties, editor `cursor` movement APIs). Patterns are tuned to minimize this but not eliminate it.
+
 ## Features
 
 - **GitHub API Integration**: Full GitHub API client with automatic rate limiting and pagination
@@ -320,51 +327,6 @@ Detections by Type:
 2. **Organization Compliance**: Scan your entire GitHub organization for AI-generated code
 3. **Repository Analysis**: Understand the extent of Claude usage in specific projects
 4. **Custom Detection**: Add your own patterns to detect specific AI tooling markers
-
-## Limitations
-
-- Only scans commit metadata and messages (not full file contents by default)
-- Rate limited by GitHub API quotas
-- Detection based on known Claude signatures (may not catch all cases)
-- Large repositories may take time to scan completely
-
-### Current Known False Positives
-
-The word "cursor" in branch names will trigger 
-the Cursor IDE detector.
-
-Example: `cursor-move-foldedline-unit` in a merge 
-commit from VSCode will flag as cursor_detected.
-
-This is on our brain. Fix incoming. PRs welcome.
-
-## Legal
-
-This is a compliance tool.
-
-The supply chain risk designation under 10 USC 3252 requires contractors to certify their DoW contract work does not involve designated entities.
-
-We are helping contractors make that certification accurately.
-
-Anthropic's own statement notes the designation legally 
-extends only to DoW contract work, not commercial activity.
-We make no claims beyond what the tool finds.
-Simply attempting to help everyone follow the laws as written, especially when they change no matter what following that law specifically means.
-
-As a reminder, following the supply chain designation is a requirement for all DoW work. No matter how connected that is to your infrastructure. 
-
-## Contributing
-
-Found a detection pattern we missed?
-Found a false positive?
-Work at a defense contractor and found something interesting?
-
-Open an issue.
-Open a PR.
-
-The more accurate this tool is, the more useful 
-it is for compliance purposes.
-
 
 ## License
 

@@ -30,10 +30,9 @@ class ClaudeDetector:
         "co_author": r"Co-Authored-By:\s*Claude\s*<[^>]+>",
         "claude_code": r"Generated with \[Claude Code\]",
         "claude_commit": r"🤖 Generated with.*Claude",
-        "claude_email": r"<noreply@anthropic\.com>",
+        "claude_email": r"(?m)^(?:Co-[Aa]uthored-[Bb]y|Signed-off-by):.*<noreply@anthropic\.com>",
         "claude_ai_marker": r"(?i)(claude\.ai|anthropic\.com|claude-\d)",
-        "cursor_claude": r"(?i)cursor.*claude",
-        "cursor_ai": r"(?i)cursor ai",
+        "cursor_claude": r"(?i)\bcursor\s+(ide|ai|editor)\b.*claude",
         "copilot_claude": r"(?i)copilot.*claude",
     }
 
@@ -43,7 +42,7 @@ class ClaudeDetector:
         r"(?i)co-authored.*claude",
         r"(?i)written (by|with) claude",
         r"(?i)ai generated.*claude",
-        r"(?i)cursor.*claude",
+        r"(?i)\bcursor\s+(ide|ai|editor)\b.*claude",
         r"(?i)copied from claude",
         r"(?i)pasted from claude",
         r"(?i)claude\.ai chat",
@@ -77,7 +76,6 @@ class ClaudeDetector:
     CURSOR_SPECIFIC_PATTERNS = [
         r"(?i)\bcursor\s+(ide|ai|editor)\b",
         r"(?i)\bbuilt\s+with\s+cursor\b",
-        r"(?i)\busing\s+cursor\b",
         r"(?i)\bgenerated\s+(by|with)\s+cursor\b",
         r"\.cursor/rules",
         r"\.cursor/settings",
