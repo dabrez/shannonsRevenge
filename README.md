@@ -8,6 +8,11 @@ Anthropic a supply chain risk.
 Defense contractors must now certify they have no 
 commercial activity with Anthropic.
 
+
+The Pentagon declared an American AI company 
+a national security threat for refusing to enable mass surveillance. 
+This scans your codebase so you can comply with that political theater
+
 This tool helps you comply.
 
 Named after Claude Shannon, the father of information theory.
